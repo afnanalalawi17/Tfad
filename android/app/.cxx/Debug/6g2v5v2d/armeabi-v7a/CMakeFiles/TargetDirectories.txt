@@ -1,0 +1,2 @@
+/Users/admin/tfad_app/android/app/.cxx/Debug/6g2v5v2d/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/admin/tfad_app/android/app/.cxx/Debug/6g2v5v2d/armeabi-v7a/CMakeFiles/rebuild_cache.dir
