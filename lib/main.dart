@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
@@ -11,6 +13,8 @@ import 'package:tfad_app/notfication.dart';
 import 'package:tfad_app/settings.dart';
 
 void main() async{
+  HttpOverrides.global = _InsecureHttpOverrides(); // DEBUG ONLY
+
   await GetStorage.init();
   runApp( 
     GetMaterialApp(
@@ -42,7 +46,7 @@ void main() async{
       ],
       home:
 
-      BasicView(),
+      LoginScreen(),
       locale: const Locale('ar'),
       fallbackLocale: const Locale('ar'),
       getPages: [
@@ -50,4 +54,15 @@ void main() async{
       ],
     ),
   );
+}
+class _InsecureHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    final client = super.createHttpClient(context);
+    client.badCertificateCallback = (X509Certificate cert, String host, int port) {
+      // احذري: هذا يقبل أي شهادة! استخدميه مؤقتًا فقط أثناء التطوير
+      return host == 'report.daamup.sa';
+    };
+    return client;
+  }
 }

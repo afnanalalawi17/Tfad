@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:tfad_app/model/station.dart';
+
+import 'model/QUESTION.dart';
  final box = GetStorage();
 class ApiService {
   static const String baseUrl = "https://report.daamup.sa/api";
@@ -165,7 +167,8 @@ static Future<void> submitReport({
 
   // Add images
   for (var image in images) {
-    request.files.add(await http.MultipartFile.fromPath('images[]', image.path));
+    request.files.add(
+        await http.MultipartFile.fromPath('images[]', image.path));
   }
 
   try {
@@ -184,5 +187,23 @@ static Future<void> submitReport({
   }
 }
 
+  static const _base = 'https://report.daamup.sa/api';
+// Replace with a secure token handling in production.
+  static const _token = 'Bearer 4|uGSTtCLhKkkUooPH60eKB7ij9nOiVoJXBzz8iWvN6d24cba5';
 
+  static Future<(List<StationApi>, List<QuestionApi>)> fetchInit() async {
+    final url = Uri.parse('$_base/stations');
+    final res = await http.get(url, headers: {'Authorization': _token});
+    if (res.statusCode != 200) {
+      throw Exception('Failed to load: ${res.statusCode} ${res.reasonPhrase}');
+    }
+    final data = jsonDecode(res.body) as Map<String, dynamic>;
+    final stations = ((data['stations'] ?? []) as List)
+        .map((e) => StationApi.fromJson(e))
+        .toList();
+    final questions = ((data['questions'] ?? []) as List)
+        .map((e) => QuestionApi.fromJson(e))
+        .toList();
+    return (stations, questions);
+  }
 }
